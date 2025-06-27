@@ -1,0 +1,39 @@
+# Package names to exclude from Nuitka builds
+# Used by both Makefile and patch_meta.py
+# For versions, see requirements.txt
+
+tensorflow
+torch
+scipy
+matplotlib
+pandas
+sklearn
+scikit-learn
+joblib
+pyarrow
+datasets
+prompt_toolkit
+pygments
+PIL
+pillow
+notebook
+qtpy
+pytest
+IPython
+llvmlite
+lxml
+onnx
+onnxruntime
+numba
+librosa
+h5py
+contourpy
+aiohttp
+cryptography
+bcrypt
+kiwisolver
+soxr
+sqlalchemy
+xxhash
+mlx
+mlx-lm
