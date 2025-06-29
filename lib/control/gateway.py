@@ -1,5 +1,5 @@
 from ..domain.contract import Contract
-from ..api.proto import echoservice_pb2, echoservice_pb2_grpc
+from ..generated.api.proto import echoservice_pb2, echoservice_pb2_grpc
 
 class Gateway(Contract):
     def __init__(self, channel):

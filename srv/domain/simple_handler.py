@@ -1,4 +1,4 @@
-from .contract import Contract
+from hsu_echo.domain.contract import Contract
 
 class SimpleHandler(Contract):
     def __init__(self):

@@ -1,5 +1,5 @@
-from hsu_core.py.control.server import Server
-from hsu_core.py.control.def_handler import register_grpc_default_server_handler as register_core_grpc_default_server_handler
+from hsu_core.control.server import Server
+from hsu_core.control.def_handler import register_grpc_default_server_handler as register_core_grpc_default_server_handler
 from .handler import register_grpc_server_handler as register_echo_grpc_server_handler
 
 def serve_echo(handler):

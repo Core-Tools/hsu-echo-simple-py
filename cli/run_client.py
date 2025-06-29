@@ -5,9 +5,9 @@ parser = argparse.ArgumentParser(description="Echo gRPC Client")
 parser.add_argument("--port", type=int, default=50055, help="Port to connect to")
 args = parser.parse_args()
 
-from hsu_core.py.control.client_conn import ClientConn
-from hsu_core.py.control.gateway import Gateway as CoreGateway
-from src.control.gateway import Gateway as EchoGateway
+from hsu_core.control.client_conn import ClientConn
+from hsu_core.control.gateway import Gateway as CoreGateway
+from hsu_echo.control.gateway import Gateway as EchoGateway
 
 retry_period = 1
 while True:

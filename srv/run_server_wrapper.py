@@ -6,7 +6,7 @@ Wrapper script for echo_server that applies metadata patches before starting.
 import os
 
 # Import the metadata patch FIRST, before any other imports that might use importlib.metadata
-from hsu_core.py.build.patch_meta import patch_importlib_metadata
+from hsu_core.build.patch_meta import patch_importlib_metadata
 
 # Now import and run the original server
 import run_server
@@ -17,4 +17,5 @@ if __name__ == "__main__":
     requirements_file = os.path.join(os.path.dirname(__file__), 'requirements.txt')
     patch_importlib_metadata(excludes_file, requirements_file)
     
-    run_server.serve() 
+    run_server.serve()
+    
