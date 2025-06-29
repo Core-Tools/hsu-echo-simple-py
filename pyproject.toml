@@ -70,7 +70,7 @@ packages = [
     "hsu_echo.generated.api",
     "hsu_echo.generated.api.proto", 
     "hsu_echo.control",
-    "hsu_echo.domain"
+    "hsu_echo.domain",
 ]
 
 [tool.setuptools.package-dir]

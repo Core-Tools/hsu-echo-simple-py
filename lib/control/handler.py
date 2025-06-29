@@ -6,7 +6,7 @@ import grpc
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(parent_dir)
 # Also add the proto directory to path so echoservice_pb2_grpc can find echoservice_pb2
-proto_dir = os.path.join(parent_dir, "api", "proto")
+proto_dir = os.path.join(parent_dir, "generated", "api", "proto")
 sys.path.append(proto_dir)
 
 from ..generated.api.proto import echoservice_pb2
