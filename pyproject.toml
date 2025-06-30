@@ -71,10 +71,12 @@ packages = [
     "hsu_echo.generated.api.proto", 
     "hsu_echo.control",
     "hsu_echo.domain",
+    "hsu_echo_simple",
 ]
 
 [tool.setuptools.package-dir]
 "hsu_echo" = "lib"
+"hsu_echo_simple" = "srv/domain"
 
 # UV configuration (future-ready)
 [tool.uv]

@@ -5,7 +5,7 @@ Used as the PyInstaller and Nuitka entry point.
 """
 
 from hsu_echo.control.serve_echo import serve_echo
-from domain.simple_handler import SimpleHandler
+from hsu_echo_simple.simple_handler import SimpleHandler
 
 def main():
     """Main entry point for the Echo gRPC server."""
