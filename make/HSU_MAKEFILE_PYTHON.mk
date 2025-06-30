@@ -248,6 +248,16 @@ NUITKA_BUILD_DIR := build/$(NUITKA_OUTPUT_NAME)
 NUITKA_LOG_FILE := build-$(NUITKA_OUTPUT_NAME).log
 NUITKA_EXECUTABLE := $(NUITKA_BUILD_DIR)/$(NUITKA_OUTPUT_NAME)$(EXECUTABLE_EXT)
 
+# Generated wrapper configuration
+NUITKA_GENERATED_WRAPPER := $(PYTHON_DIR)/run_server_wrapper_generated.py
+NUITKA_SOURCE_FILE := $(NUITKA_GENERATED_WRAPPER)
+
+# Generate import statement and entry point call from NUITKA_ENTRY_POINT
+NUITKA_ENTRY_MODULE := $(subst /,.,$(patsubst %.py,%,$(NUITKA_ENTRY_POINT)))
+NUITKA_IMPORT_STATEMENT := import $(NUITKA_ENTRY_MODULE)
+NUITKA_ENTRY_POINT_CALL := $(NUITKA_ENTRY_MODULE).main()
+NUITKA_ENTRY_POINT_DIR := $(dir $(NUITKA_ENTRY_POINT))
+
 # Dynamic patch_meta module name based on INCLUDE_PREFIX
 ifneq ($(INCLUDE_PREFIX),)
     # Strip trailing slash and create module name (e.g., make/ → make.patch_meta)
@@ -275,10 +285,6 @@ NUITKA_COMMON_OPTS := \
     --show-memory \
     --include-package=grpc \
     --include-module=$(NUITKA_PATCH_META_MODULE) \
-    --follow-import-to=hsu_core \
-    --include-module=jaraco.text \
-    --include-package=tqdm \
-    --include-package=yaml \
     $(NUITKA_NOFOLLOW_OPTS) \
     --include-module=importlib.metadata \
     --remove-output \
@@ -291,6 +297,10 @@ endif
 
 ifneq ($(NUITKA_EXTRA_PACKAGES),)
     NUITKA_COMMON_OPTS += $(foreach pkg,$(NUITKA_EXTRA_PACKAGES),--include-package=$(pkg))
+endif
+
+ifneq ($(NUITKA_EXTRA_FOLLOW_IMPORTS),)
+    NUITKA_COMMON_OPTS += $(foreach pkg,$(NUITKA_EXTRA_FOLLOW_IMPORTS),--follow-import-to=$(pkg))
 endif
 
 # Build mode options
@@ -313,10 +323,27 @@ endif
 NUITKA_OPTS += --output-dir=$(NUITKA_BUILD_DIR)
 
 # Nuitka-specific targets
-.PHONY: py-nuitka py-nuitka-clean py-nuitka-info py-nuitka-deps
+.PHONY: py-nuitka py-nuitka-clean py-nuitka-info py-nuitka-deps py-nuitka-generate-wrapper
+
+# Convert INCLUDE_PREFIX to Python module format (make/ → make.)
+INCLUDE_PREFIX_PYTHON := $(patsubst %/,%,$(INCLUDE_PREFIX))
+
+# Generate wrapper from template
+$(NUITKA_GENERATED_WRAPPER): $(INCLUDE_PREFIX)run_server_wrapper.py.template
+	@echo "Generating server wrapper from template..."
+	@mkdir -p $(dir $@)
+	@sed -e 's|{{HSU_INCLUDE_PREFIX_PYTHON}}|$(INCLUDE_PREFIX_PYTHON).|g' \
+	     -e 's|{{IMPORT_STATEMENT}}|$(NUITKA_IMPORT_STATEMENT)|g' \
+	     -e 's|{{ENTRY_POINT_CALL}}|$(NUITKA_ENTRY_POINT_CALL)|g' \
+	     -e 's|{{ENTRY_POINT_DIR}}|$(NUITKA_ENTRY_POINT_DIR)|g' \
+	     $< > $@
+	@echo "✅ Generated wrapper: $@"
+
+## Python Nuitka Generate Wrapper - Generate wrapper from template  
+py-nuitka-generate-wrapper: $(NUITKA_GENERATED_WRAPPER)
 
 ## Python Nuitka - Build Python binary with Nuitka
-py-nuitka: py-nuitka-deps
+py-nuitka: py-nuitka-deps $(NUITKA_GENERATED_WRAPPER)
 	@echo "Building $(NUITKA_OUTPUT_NAME) with Nuitka..."
 	@echo "Detected OS: $(DETECTED_OS)"
 	@echo "Source: $(NUITKA_SOURCE_FILE)"
@@ -363,6 +390,7 @@ py-nuitka-clean:
 	@echo "Cleaning Nuitka build artifacts..."
 	@$(RM_RF) "$(NUITKA_BUILD_DIR)" 2>$(NULL_DEV) || true
 	@$(RM_RF) "$(NUITKA_LOG_FILE)" 2>$(NULL_DEV) || true
+	@$(RM_RF) "$(NUITKA_GENERATED_WRAPPER)" 2>$(NULL_DEV) || true
 	@echo "✅ Nuitka clean complete"
 
 ## Python Nuitka Info - Show Nuitka configuration
@@ -370,7 +398,9 @@ py-nuitka-info:
 	@echo "=== Nuitka Build Configuration ==="
 	@echo "Enabled: $(ENABLE_NUITKA)"
 	@echo "Output Name: $(NUITKA_OUTPUT_NAME)"
-	@echo "Source File: $(NUITKA_SOURCE_FILE)"
+	@echo "Entry Point: $(NUITKA_ENTRY_POINT)"
+	@echo "Generated Wrapper: $(NUITKA_GENERATED_WRAPPER)"
+	@echo "Source File (final): $(NUITKA_SOURCE_FILE)"
 	@echo "Build Mode: $(NUITKA_BUILD_MODE)"
 	@echo "Build Directory: $(NUITKA_BUILD_DIR)"
 	@echo "Executable: $(NUITKA_EXECUTABLE)"
@@ -379,8 +409,14 @@ py-nuitka-info:
 	@echo "Excluded Packages: $(NUITKA_EXCLUDE_PACKAGES)"
 	@echo "Extra Modules: $(NUITKA_EXTRA_MODULES)"
 	@echo "Extra Packages: $(NUITKA_EXTRA_PACKAGES)"
+	@echo "Extra Follow Imports: $(NUITKA_EXTRA_FOLLOW_IMPORTS)"
 	@echo "Patch Meta Module: $(NUITKA_PATCH_META_MODULE)"
 	@echo "Include Prefix: '$(INCLUDE_PREFIX)'"
+	@echo ""
+	@echo "=== Wrapper Generation ==="
+	@echo "Entry Module: $(NUITKA_ENTRY_MODULE)"
+	@echo "Import Statement: $(NUITKA_IMPORT_STATEMENT)"
+	@echo "Entry Point Call: $(NUITKA_ENTRY_POINT_CALL)"
 
 
             

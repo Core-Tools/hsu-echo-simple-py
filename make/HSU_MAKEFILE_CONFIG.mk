@@ -58,10 +58,11 @@ ENABLE_BENCHMARKS := yes
 # Nuitka Build Configuration (Python binary compilation)
 ENABLE_NUITKA := no
 NUITKA_OUTPUT_NAME := server
-NUITKA_SOURCE_FILE := srv/run_server_wrapper.py
+NUITKA_ENTRY_POINT := srv/run_server.py
 NUITKA_EXCLUDES_FILE := nuitka_excludes.txt
 NUITKA_EXTRA_MODULES := 
 NUITKA_EXTRA_PACKAGES := 
+NUITKA_EXTRA_FOLLOW_IMPORTS := 
 NUITKA_BUILD_MODE := onefile
 
 # Platform
