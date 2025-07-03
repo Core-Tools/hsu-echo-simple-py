@@ -2,3 +2,15 @@
 # Used by both Makefile and patch_meta.py
 # For versions, see requirements.txt
 
+# Code generation tools (not needed at runtime, code already generated)
+grpcio-tools
+
+# Development/testing tools (not needed in production binary)
+pytest
+black
+isort
+mypy
+ruff
+
+# Build tools (compiler itself not needed in compiled binary)
+nuitka
